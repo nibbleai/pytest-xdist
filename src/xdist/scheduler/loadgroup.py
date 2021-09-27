@@ -1,3 +1,5 @@
+import re
+
 from .loadscope import LoadScopeScheduling
 from xdist.remote import Producer
 
@@ -47,8 +49,7 @@ class LoadGroupScheduling(LoadScopeScheduling):
             gname
             gname
         """
-        if nodeid.rfind("@") > nodeid.rfind("]"):
-            # check the index of ']' to avoid the case: parametrize mark value has '@'
-            return nodeid.split("@")[-1]
-        else:
-            return nodeid
+        res = re.search(r"\[(.*)\]", nodeid)
+        params = res.group(1) if res else ''
+        group_name = nodeid.split("@")[-1]
+        return f'{group_name}[{params}]'
